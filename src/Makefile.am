@@ -56,7 +56,7 @@ libshr_glib_la.bindings.stamp: gen-bindings $(libshr_glib_la_SOURCES)
 	touch $@
 
 gen-bindings:
-	gdbus-codegen --strip-prefix=org.shr $(SHR_SPECS_DIR)/*.xml
+	gdbus-codegen --strip-prefix=org.shr --output-prefix=shr $(SHR_SPECS_DIR)/xml/*.xml
 
 libshr_glib_la_LIBADD = \
 	$(DEPS_LIBS)
