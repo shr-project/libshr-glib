@@ -37,6 +37,8 @@ typedef struct _PhoneuiSettings PhoneuiSettings; /* Dummy typedef */
  * @parent_iface: The parent interface.
  * @handle_display_quick_settings: Handler for the #PhoneuiSettings::handle-display-quick-settings signal.
  * @handle_display_sim_manager: Handler for the #PhoneuiSettings::handle-display-sim-manager signal.
+ * @handle_set_message_receipt: Handler for the #PhoneuiSettings::handle-set-message-receipt signal.
+ * @handle_get_message_receipt: Handler for the #PhoneuiSettings::handle-get-message-receipt signal.
  *
  * Virtual table.
  */
@@ -196,6 +198,13 @@ struct _PhoneuiSettingsIface
   gboolean (*handle_display_sim_manager) (
         PhoneuiSettings *object,
         GDBusMethodInvocation *invocation);
+  gboolean (*handle_set_message_receipt) (
+        PhoneuiSettings *object,
+        GDBusMethodInvocation *invocation,
+        gboolean message_receipt);
+  gboolean (*handle_get_message_receipt) (
+        PhoneuiSettings *object,
+        GDBusMethodInvocation *invocation);
 };
 
 /* C Bindings for properties */
@@ -236,6 +245,44 @@ gboolean phoneui_settings_call_display_sim_manager_sync (
         GError **error);
 
 
+void phoneui_settings_call_set_message_receipt (
+        PhoneuiSettings *proxy,
+        gboolean message_receipt,
+        GCancellable *cancellable,
+        GAsyncReadyCallback callback,
+        gpointer user_data);
+
+gboolean phoneui_settings_call_set_message_receipt_finish (
+        PhoneuiSettings *proxy,
+        GAsyncResult *res,
+        GError **error);
+
+gboolean phoneui_settings_call_set_message_receipt_sync (
+        PhoneuiSettings *proxy,
+        gboolean message_receipt,
+        GCancellable *cancellable,
+        GError **error);
+
+
+void phoneui_settings_call_get_message_receipt (
+        PhoneuiSettings *proxy,
+        GCancellable *cancellable,
+        GAsyncReadyCallback callback,
+        gpointer user_data);
+
+gboolean phoneui_settings_call_get_message_receipt_finish (
+        PhoneuiSettings *proxy,
+        gboolean *out_message_receipt,
+        GAsyncResult *res,
+        GError **error);
+
+gboolean phoneui_settings_call_get_message_receipt_sync (
+        PhoneuiSettings *proxy,
+        gboolean *out_message_receipt,
+        GCancellable *cancellable,
+        GError **error);
+
+
 
 /* D-Bus Methods Completion Helpers */
 void phoneui_settings_complete_display_quick_settings (
@@ -246,6 +293,17 @@ void phoneui_settings_complete_display_quick_settings (
 void phoneui_settings_complete_display_sim_manager (
         PhoneuiSettings *object,
         GDBusMethodInvocation *invocation);
+
+
+void phoneui_settings_complete_set_message_receipt (
+        PhoneuiSettings *object,
+        GDBusMethodInvocation *invocation);
+
+
+void phoneui_settings_complete_get_message_receipt (
+        PhoneuiSettings *object,
+        GDBusMethodInvocation *invocation,
+        gboolean message_receipt);
 
 
 

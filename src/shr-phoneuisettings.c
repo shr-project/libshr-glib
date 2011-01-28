@@ -25,6 +25,18 @@
  *     <annotation name="org.freedesktop.DBus.GLib.Async" value="true">
  *     </annotation>
  *   </method>
+ *   <method name="SetMessageReceipt">
+ *     <annotation name="org.freedesktop.DBus.GLib.Async" value="true">
+ *     </annotation>
+ *     <arg type="b" name="message_receipt" direction="in">
+ *     </arg>
+ *   </method>
+ *   <method name="GetMessageReceipt">
+ *     <annotation name="org.freedesktop.DBus.GLib.Async" value="true">
+ *     </annotation>
+ *     <arg type="b" name="message_receipt" direction="out">
+ *     </arg>
+ *   </method>
  * </interface>
  * ]]></programlisting>
  *
@@ -58,6 +70,8 @@ enum
   _0_SIGNAL,
   __DISPLAY_QUICK_SETTINGS_METHOD,
   __DISPLAY_SIM_MANAGER_METHOD,
+  __SET_MESSAGE_RECEIPT_METHOD,
+  __GET_MESSAGE_RECEIPT_METHOD,
   __LAST_SIGNAL
 };
 
@@ -135,6 +149,8 @@ phoneui_settings_default_init (PhoneuiSettingsIface *iface)
   _property_name_to_gname = g_hash_table_new (g_str_hash, g_str_equal);
   g_hash_table_insert (_method_name_to_id, "DisplayQuickSettings", GUINT_TO_POINTER (__DISPLAY_QUICK_SETTINGS_METHOD));
   g_hash_table_insert (_method_name_to_id, "DisplaySimManager", GUINT_TO_POINTER (__DISPLAY_SIM_MANAGER_METHOD));
+  g_hash_table_insert (_method_name_to_id, "SetMessageReceipt", GUINT_TO_POINTER (__SET_MESSAGE_RECEIPT_METHOD));
+  g_hash_table_insert (_method_name_to_id, "GetMessageReceipt", GUINT_TO_POINTER (__GET_MESSAGE_RECEIPT_METHOD));
 
   /* GObject signals definitions for D-Bus signals: */
 
@@ -185,6 +201,60 @@ phoneui_settings_default_init (PhoneuiSettingsIface *iface)
                   G_TYPE_FROM_INTERFACE (iface),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (PhoneuiSettingsIface, handle_display_sim_manager),
+                  g_signal_accumulator_true_handled,
+                  NULL,
+                  _shr_gdbus_cclosure_marshaller_BOOLEAN__OBJECT,
+                  G_TYPE_BOOLEAN,
+                  1,
+                  G_TYPE_DBUS_METHOD_INVOCATION);
+  /**
+   * PhoneuiSettings::handle-set-message-receipt:
+   * @object: The exported object emitting the signal.
+   * @invocation: A #GDBusMethodInvocation object that can be used to return a value or error.
+   * @message_receipt: Parameter.
+   *
+   * On exported objects, this signal is emitted when a remote process (identified by @invocation) invokes the <literal>org.shr.phoneui.Settings.SetMessageReceipt()</literal> D-Bus method on @object. Use phoneui_settings_complete_set_message_receipt() to return a value or g_dbus_method_invocation_return_error() to return an error.
+   *
+   * The signal is emitted in the
+   * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+   * of the thread that @object was registered in.
+   *
+   * On proxies, this signal is never emitted.
+   *
+   * Returns: %TRUE if you want to handle the method call (will stop further handlers from being called), %FALSE otherwise.
+   */
+  signals[__SET_MESSAGE_RECEIPT_METHOD] =
+    g_signal_new ("handle-set-message-receipt",
+                  G_TYPE_FROM_INTERFACE (iface),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (PhoneuiSettingsIface, handle_set_message_receipt),
+                  g_signal_accumulator_true_handled,
+                  NULL,
+                  _shr_gdbus_cclosure_marshaller_BOOLEAN__OBJECT_BOOLEAN,
+                  G_TYPE_BOOLEAN,
+                  2,
+                  G_TYPE_DBUS_METHOD_INVOCATION,
+                  G_TYPE_BOOLEAN);
+  /**
+   * PhoneuiSettings::handle-get-message-receipt:
+   * @object: The exported object emitting the signal.
+   * @invocation: A #GDBusMethodInvocation object that can be used to return a value or error.
+   *
+   * On exported objects, this signal is emitted when a remote process (identified by @invocation) invokes the <literal>org.shr.phoneui.Settings.GetMessageReceipt()</literal> D-Bus method on @object. Use phoneui_settings_complete_get_message_receipt() to return a value or g_dbus_method_invocation_return_error() to return an error.
+   *
+   * The signal is emitted in the
+   * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+   * of the thread that @object was registered in.
+   *
+   * On proxies, this signal is never emitted.
+   *
+   * Returns: %TRUE if you want to handle the method call (will stop further handlers from being called), %FALSE otherwise.
+   */
+  signals[__GET_MESSAGE_RECEIPT_METHOD] =
+    g_signal_new ("handle-get-message-receipt",
+                  G_TYPE_FROM_INTERFACE (iface),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (PhoneuiSettingsIface, handle_get_message_receipt),
                   g_signal_accumulator_true_handled,
                   NULL,
                   _shr_gdbus_cclosure_marshaller_BOOLEAN__OBJECT,
@@ -399,6 +469,226 @@ _out:
 
 
 /**
+ * phoneui_settings_call_set_message_receipt:
+ * @proxy: A #PhoneuiSettings.
+ * @message_receipt: Method parameter.
+ * @cancellable: A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL if you don't care about the result of the method invocation.
+ * @user_data: Data to pass to @callback.
+ *
+ * Invokes the <literal>org.shr.phoneui.Settings.SetMessageReceipt()</literal>
+ * D-Bus method on the remote object represented by @proxy.
+ *
+ * This is an asynchronous method. When the operation is finished,
+ * callback will be invoked in the
+ * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+ * of the thread you are calling this method from. You can then call
+ * phoneui_settings_call_set_message_receipt_finish() to get the result of the operation.
+ * See phoneui_settings_call_set_message_receipt_sync() for the synchronous version of this method.
+ */
+void phoneui_settings_call_set_message_receipt (
+        PhoneuiSettings *proxy,
+        gboolean message_receipt,
+        GCancellable *cancellable,
+        GAsyncReadyCallback callback,
+        gpointer user_data)
+{
+  GVariant *_params;
+  _params = g_variant_new ("(b)",
+                           message_receipt);
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+                     "SetMessageReceipt",
+                     _params,
+                     G_DBUS_CALL_FLAGS_NONE,
+                     -1,
+                     cancellable,
+                     callback,
+                     user_data);
+}
+
+/**
+ * phoneui_settings_call_set_message_receipt_finish:
+ * @proxy: A #PhoneuiSettings.
+ * @res: A #GAsyncResult obtained from the #GAsyncReadyCallback passed to phoneui_settings_call_set_message_receipt().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes invoking the <literal>org.shr.phoneui.Settings.SetMessageReceipt()</literal>
+ * D-Bus method on the remote object represented by @proxy.
+ *
+ * Returns: %TRUE if the call succeeded, %FALSE if @error is set.
+ */
+gboolean phoneui_settings_call_set_message_receipt_finish (
+        PhoneuiSettings *proxy,
+        GAsyncResult *res,
+        GError **error)
+{
+  gboolean _ret = FALSE;
+  GVariant *_result;
+  _result = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_result == NULL)
+    goto _out;
+  g_variant_unref (_result);
+  _ret = TRUE;
+_out:
+  return _ret;
+}
+
+/**
+ * phoneui_settings_call_set_message_receipt_sync:
+ * @proxy: A #PhoneuiSettings.
+ * @message_receipt: Method parameter.
+ * @cancellable: A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <literal>org.shr.phoneui.Settings.SetMessageReceipt()</literal>
+ * D-Bus method on the remote object represented by @proxy.
+ * The calling thread is blocked until a reply is received. See
+ * phoneui_settings_call_set_message_receipt() for the asynchronous version of this method.
+ *
+ * Returns: %TRUE if the call succeeded, %FALSE if @error is set.
+ */
+gboolean phoneui_settings_call_set_message_receipt_sync (
+        PhoneuiSettings *proxy,
+        gboolean message_receipt,
+        GCancellable *cancellable,
+        GError **error)
+{
+  gboolean _ret = FALSE;
+  GVariant *_params;
+  GVariant *_result;
+  _params = g_variant_new ("(b)",
+                           message_receipt);
+  _result = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+                                   "SetMessageReceipt",
+                                   _params,
+                                   G_DBUS_CALL_FLAGS_NONE,
+                                   -1,
+                                   cancellable,
+                                   error);
+  if (_result == NULL)
+    goto _out;
+  g_variant_unref (_result);
+  _ret = TRUE;
+_out:
+  return _ret;
+}
+
+
+/**
+ * phoneui_settings_call_get_message_receipt:
+ * @proxy: A #PhoneuiSettings.
+ * @cancellable: A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL if you don't care about the result of the method invocation.
+ * @user_data: Data to pass to @callback.
+ *
+ * Invokes the <literal>org.shr.phoneui.Settings.GetMessageReceipt()</literal>
+ * D-Bus method on the remote object represented by @proxy.
+ *
+ * This is an asynchronous method. When the operation is finished,
+ * callback will be invoked in the
+ * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+ * of the thread you are calling this method from. You can then call
+ * phoneui_settings_call_get_message_receipt_finish() to get the result of the operation.
+ * See phoneui_settings_call_get_message_receipt_sync() for the synchronous version of this method.
+ */
+void phoneui_settings_call_get_message_receipt (
+        PhoneuiSettings *proxy,
+        GCancellable *cancellable,
+        GAsyncReadyCallback callback,
+        gpointer user_data)
+{
+  GVariant *_params;
+  _params = NULL;
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+                     "GetMessageReceipt",
+                     _params,
+                     G_DBUS_CALL_FLAGS_NONE,
+                     -1,
+                     cancellable,
+                     callback,
+                     user_data);
+}
+
+/**
+ * phoneui_settings_call_get_message_receipt_finish:
+ * @proxy: A #PhoneuiSettings.
+ * @out_message_receipt: Return location for out parameter or %NULL.
+ * @res: A #GAsyncResult obtained from the #GAsyncReadyCallback passed to phoneui_settings_call_get_message_receipt().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes invoking the <literal>org.shr.phoneui.Settings.GetMessageReceipt()</literal>
+ * D-Bus method on the remote object represented by @proxy.
+ *
+ * Returns: %TRUE if the call succeeded, %FALSE if @error is set.
+ */
+gboolean phoneui_settings_call_get_message_receipt_finish (
+        PhoneuiSettings *proxy,
+        gboolean *out_message_receipt,
+        GAsyncResult *res,
+        GError **error)
+{
+  gboolean _ret = FALSE;
+  GVariant *_result;
+  _result = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_result == NULL)
+    goto _out;
+  {
+    g_variant_get (_result,
+                   "(b)",
+                   out_message_receipt);
+  }
+  g_variant_unref (_result);
+  _ret = TRUE;
+_out:
+  return _ret;
+}
+
+/**
+ * phoneui_settings_call_get_message_receipt_sync:
+ * @proxy: A #PhoneuiSettings.
+ * @out_message_receipt: Return location for out parameter or %NULL.
+ * @cancellable: A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <literal>org.shr.phoneui.Settings.GetMessageReceipt()</literal>
+ * D-Bus method on the remote object represented by @proxy.
+ * The calling thread is blocked until a reply is received. See
+ * phoneui_settings_call_get_message_receipt() for the asynchronous version of this method.
+ *
+ * Returns: %TRUE if the call succeeded, %FALSE if @error is set.
+ */
+gboolean phoneui_settings_call_get_message_receipt_sync (
+        PhoneuiSettings *proxy,
+        gboolean *out_message_receipt,
+        GCancellable *cancellable,
+        GError **error)
+{
+  gboolean _ret = FALSE;
+  GVariant *_params;
+  GVariant *_result;
+  _params = NULL;
+  _result = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+                                   "GetMessageReceipt",
+                                   _params,
+                                   G_DBUS_CALL_FLAGS_NONE,
+                                   -1,
+                                   cancellable,
+                                   error);
+  if (_result == NULL)
+    goto _out;
+  {
+    g_variant_get (_result,
+                   "(b)",
+                   out_message_receipt);
+  }
+  g_variant_unref (_result);
+  _ret = TRUE;
+_out:
+  return _ret;
+}
+
+
+/**
  * phoneui_settings_complete_display_quick_settings:
  * @object: A #PhoneuiSettings.
  * @invocation: A #GDBusMethodInvocation.
@@ -437,6 +727,53 @@ void phoneui_settings_complete_display_sim_manager (
         GDBusMethodInvocation *invocation)
 {
   g_dbus_method_invocation_return_value (invocation, NULL);
+}
+
+
+/**
+ * phoneui_settings_complete_set_message_receipt:
+ * @object: A #PhoneuiSettings.
+ * @invocation: A #GDBusMethodInvocation.
+ *
+ * Completes handling the <literal>org.shr.phoneui.Settings.SetMessageReceipt()</literal>
+ * D-Bus method invocation by returning a value.
+ *
+ * If you want to return an error, use g_dbus_method_invocation_return_error()
+ * or similar instead.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void phoneui_settings_complete_set_message_receipt (
+        PhoneuiSettings *object,
+        GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation, NULL);
+}
+
+
+/**
+ * phoneui_settings_complete_get_message_receipt:
+ * @object: A #PhoneuiSettings.
+ * @invocation: A #GDBusMethodInvocation.
+ * @message_receipt: Value to return.
+ *
+ * Completes handling the <literal>org.shr.phoneui.Settings.GetMessageReceipt()</literal>
+ * D-Bus method invocation by returning a value.
+ *
+ * If you want to return an error, use g_dbus_method_invocation_return_error()
+ * or similar instead.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void phoneui_settings_complete_get_message_receipt (
+        PhoneuiSettings *object,
+        GDBusMethodInvocation *invocation,
+        gboolean message_receipt)
+{
+  GVariant *_params;
+  _params = g_variant_new ("(b)",
+                           message_receipt);
+  g_dbus_method_invocation_return_value (invocation, _params);
 }
 
 
@@ -480,10 +817,78 @@ static const GDBusMethodInfo phoneui_settings_method_DisplaySimManager =
   (GDBusAnnotationInfo **) DisplaySimManager_method_annotations,
 };
 
+static const GDBusArgInfo phoneui_settings_method_in_SetMessageReceipt_message_receipt =
+{
+  -1,
+  "message_receipt",
+  "b",
+  (GDBusAnnotationInfo **) NULL
+};
+static const GDBusArgInfo * const phoneui_settings_method_in_SetMessageReceipt_arg_pointers[] =
+{
+  &phoneui_settings_method_in_SetMessageReceipt_message_receipt,
+  NULL
+};
+
+static const GDBusAnnotationInfo SetMessageReceipt_method_annotations_annotation_0 = {
+  -1,
+  "org.freedesktop.DBus.GLib.Async",
+  "true",
+};
+
+static const GDBusAnnotationInfo *SetMessageReceipt_method_annotations[] = {
+  &SetMessageReceipt_method_annotations_annotation_0,
+  NULL
+};
+
+static const GDBusMethodInfo phoneui_settings_method_SetMessageReceipt =
+{
+  -1,
+  "SetMessageReceipt",
+  (GDBusArgInfo **) &phoneui_settings_method_in_SetMessageReceipt_arg_pointers,
+  (GDBusArgInfo **) NULL,
+  (GDBusAnnotationInfo **) SetMessageReceipt_method_annotations,
+};
+
+static const GDBusArgInfo phoneui_settings_method_out_GetMessageReceipt_message_receipt =
+{
+  -1,
+  "message_receipt",
+  "b",
+  (GDBusAnnotationInfo **) NULL
+};
+static const GDBusArgInfo * const phoneui_settings_method_out_GetMessageReceipt_arg_pointers[] =
+{
+  &phoneui_settings_method_out_GetMessageReceipt_message_receipt,
+  NULL
+};
+
+static const GDBusAnnotationInfo GetMessageReceipt_method_annotations_annotation_0 = {
+  -1,
+  "org.freedesktop.DBus.GLib.Async",
+  "true",
+};
+
+static const GDBusAnnotationInfo *GetMessageReceipt_method_annotations[] = {
+  &GetMessageReceipt_method_annotations_annotation_0,
+  NULL
+};
+
+static const GDBusMethodInfo phoneui_settings_method_GetMessageReceipt =
+{
+  -1,
+  "GetMessageReceipt",
+  (GDBusArgInfo **) NULL,
+  (GDBusArgInfo **) &phoneui_settings_method_out_GetMessageReceipt_arg_pointers,
+  (GDBusAnnotationInfo **) GetMessageReceipt_method_annotations,
+};
+
 static const GDBusMethodInfo * const phoneui_settings_method_info_pointers[] =
 {
   &phoneui_settings_method_DisplayQuickSettings,
   &phoneui_settings_method_DisplaySimManager,
+  &phoneui_settings_method_SetMessageReceipt,
+  &phoneui_settings_method_GetMessageReceipt,
   NULL
 };
 
@@ -524,6 +929,34 @@ handle_method_call_real (GDBusConnection       *connection,
       break;
 
     case __DISPLAY_SIM_MANAGER_METHOD:
+      {
+        PhoneuiSettings *object = PHONEUI_SETTINGS (user_data);
+        gboolean handled;
+        g_signal_emit (object,
+                       signals[method_id],
+                       0, invocation, &handled);
+        if (!handled)
+          goto not_implemented;
+      }
+      break;
+
+    case __SET_MESSAGE_RECEIPT_METHOD:
+      {
+        PhoneuiSettings *object = PHONEUI_SETTINGS (user_data);
+        gboolean handled;
+        gboolean arg_message_receipt;
+        g_variant_get (parameters,
+                       "(b)",
+                       &arg_message_receipt);
+        g_signal_emit (object,
+                       signals[method_id],
+                       0, invocation, arg_message_receipt, &handled);
+        if (!handled)
+          goto not_implemented;
+      }
+      break;
+
+    case __GET_MESSAGE_RECEIPT_METHOD:
       {
         PhoneuiSettings *object = PHONEUI_SETTINGS (user_data);
         gboolean handled;
