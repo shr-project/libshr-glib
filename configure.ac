@@ -1,4 +1,4 @@
-AC_INIT([libshr-glib], [2010.12.13.1], [shr-devel@lists.shr-project.org], [libshr-glib])
+AC_INIT([libshr-glib], [2011.03.14.1], [shr-devel@lists.shr-project.org], [libshr-glib])
 AC_CONFIG_SRCDIR([src/Makefile.am])
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE([dist-bzip2])
