@@ -12,9 +12,6 @@ GDBUSCODEGENFLAGS = \
 BUILT_SOURCES = libshr_glib_la.bindings.stamp
 
 SHRHEADERS = \
-	shr-bindings.h \
-	shr-bindingsprivate.h \
-	shr-marshallers.h \
 	shr-phonefsousage.h \
 	shr-phoneuicallmanagement.h \
 	shr-phoneuicontacts.h \
@@ -23,13 +20,9 @@ SHRHEADERS = \
 	shr-phoneuimessages.h \
 	shr-phoneuinotification.h \
 	shr-phoneuiphonelog.h \
-	shr-phoneuisettings.h \
-	shr-proxymanager.h \
-	shr-types.h
+	shr-phoneuisettings.h 
 
 SHRSOURCES = \
-	shr-bindingsprivate.c \
-	shr-marshallers.c \
 	shr-phonefsousage.c \
 	shr-phoneuicallmanagement.c \
 	shr-phoneuicontacts.c \
@@ -38,8 +31,7 @@ SHRSOURCES = \
 	shr-phoneuimessages.c \
 	shr-phoneuinotification.c \
 	shr-phoneuiphonelog.c \
-	shr-phoneuisettings.c \
-	shr-proxymanager.c
+	shr-phoneuisettings.c 
 
 lib_LTLIBRARIES = libshr-glib.la
 
@@ -56,7 +48,7 @@ libshr_glib_la.bindings.stamp: gen-bindings $(libshr_glib_la_SOURCES)
 	touch $@
 
 gen-bindings:
-	gdbus-codegen --strip-prefix=org.shr --output-prefix=shr $(SHR_SPECS_DIR)/*.xml
+	for f in $(SHR_SPECS_DIR)/*.xml; do gdbus-codegen --interface-prefix org.shr --generate-c-code `echo $$f | sed 's/.*\///g; s/^org\.shr\./shr-/g; s/.xml//g; s/\.//g;' | awk  '{ printf tolower($$1)}'` $$f; done
 
 libshr_glib_la_LIBADD = \
 	$(DEPS_LIBS)
