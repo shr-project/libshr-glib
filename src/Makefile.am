@@ -12,6 +12,7 @@ GDBUSCODEGENFLAGS = \
 BUILT_SOURCES = libshr_glib_la.bindings.stamp
 
 SHRHEADERS = \
+	shr-bindings.h \
 	shr-phonefsousage.h \
 	shr-phoneuicallmanagement.h \
 	shr-phoneuicontacts.h \
@@ -43,12 +44,14 @@ libshr_glibdir = $(includedir)/shr-glib
 libshr_glib_HEADERS = \
 	$(SHRHEADERS)
 
+shr-bindings.h: gen-bindings
+	touch $@
 
 libshr_glib_la.bindings.stamp: gen-bindings $(libshr_glib_la_SOURCES)
 	touch $@
 
 gen-bindings:
-	for f in $(SHR_SPECS_DIR)/*.xml; do gdbus-codegen --interface-prefix org.shr --generate-c-code `echo $$f | sed 's/.*\///g; s/^org\.shr\./shr-/g; s/.xml//g; s/\.//g;' | awk  '{ printf tolower($$1)}'` $$f; done
+	for f in $(SHR_SPECS_DIR)/*.xml; do OUT=`echo $$f | sed 's/.*\///g; s/^org\.shr\./shr-/g; s/.xml//g; s/\.//g;' | awk  '{ printf tolower($$1)}'`; gdbus-codegen  --interface-prefix org.shr --generate-c-code $$OUT $$f; echo "#include <$$OUT.h>" >> shr-bindings.h; done
 
 libshr_glib_la_LIBADD = \
 	$(DEPS_LIBS)
