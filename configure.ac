@@ -14,13 +14,11 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 
-GLIB_REQUIRED=2.26.1
+GLIB_REQUIRED=2.29.3
 FSO_SPECS_REQUIRED=$PACKAGE_VERSION
 
 ##############################################################################
 # binding tools
-PKG_CHECK_MODULES(GDBUS_CODEGEN,
-	gdbus-codegen)
 PKG_CHECK_MODULES(SPECS,
 	fso-specs >= $FSO_SPECS_REQUIRED
 	shr-specs)
