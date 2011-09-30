@@ -1,0 +1,9 @@
+#include <shr-phonefsousage.h>
+#include <shr-phoneuicallmanagement.h>
+#include <shr-phoneuicontacts.h>
+#include <shr-phoneuidialer.h>
+#include <shr-phoneuiidlescreen.h>
+#include <shr-phoneuimessages.h>
+#include <shr-phoneuinotification.h>
+#include <shr-phoneuiphonelog.h>
+#include <shr-phoneuisettings.h>

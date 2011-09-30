@@ -14,7 +14,7 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 
-GLIB_REQUIRED=2.29.3
+GLIB_REQUIRED=2.30.0
 FSO_SPECS_REQUIRED=$PACKAGE_VERSION
 
 ##############################################################################
@@ -33,6 +33,7 @@ PKG_CHECK_MODULES(DEPS,
 glib-2.0 >= $GLIB_REQUIRED
 gobject-2.0 >= $GLIB_REQUIRED
 gio-2.0 >= $GLIB_REQUIRED
+gio-unix-2.0 >= $GLIB_REQUIRED
 gthread-2.0 >= $GLIB_REQUIRED)
 
 AC_SUBST(DEPS_CFLAGS)
